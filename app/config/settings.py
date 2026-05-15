@@ -23,7 +23,9 @@ class Settings:
 
 
 def get_settings() -> Settings:
-    load_dotenv(BASE_DIR / ".env")
+    env_file = BASE_DIR / ".env"
+    if env_file.exists():
+        load_dotenv(env_file, override=False)
 
     bot_token = os.getenv("BOT_TOKEN", "").strip()
     admin_id_raw = os.getenv("ADMIN_ID", "").strip()
