@@ -23,13 +23,18 @@ class Settings:
 
 
 def get_settings() -> Settings:
+    is_production = any(
+        os.environ.get(name)
+        for name in ("RAILWAY_ENVIRONMENT", "RAILWAY_PROJECT_ID", "RAILWAY_SERVICE_ID")
+    )
+
     env_file = BASE_DIR / ".env"
-    if env_file.exists():
+    if not is_production and env_file.exists():
         load_dotenv(env_file, override=False)
 
-    bot_token = os.getenv("BOT_TOKEN", "").strip()
-    admin_id_raw = os.getenv("ADMIN_ID", "").strip()
-    log_level = os.getenv("LOG_LEVEL", "INFO").strip().upper()
+    bot_token = os.environ.get("BOT_TOKEN", "").strip()
+    admin_id_raw = os.environ.get("ADMIN_ID", "").strip()
+    log_level = os.environ.get("LOG_LEVEL", "INFO").strip().upper()
 
     if not bot_token:
         raise ValueError("BOT_TOKEN is not set in environment variables.")
@@ -41,7 +46,7 @@ def get_settings() -> Settings:
     TMP_DIR.mkdir(parents=True, exist_ok=True)
 
     default_database_url = f"sqlite+aiosqlite:///{(DATA_DIR / 'app.db').as_posix()}"
-    database_url = os.getenv("DATABASE_URL", default_database_url).strip()
+    database_url = os.environ.get("DATABASE_URL", default_database_url).strip()
 
     return Settings(
         bot_token=bot_token,
