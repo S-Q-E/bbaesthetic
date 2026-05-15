@@ -4,8 +4,6 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from dotenv import load_dotenv
-
 BASE_DIR = Path(__file__).resolve().parents[2]
 DATA_DIR = BASE_DIR / "data"
 TMP_DIR = BASE_DIR / "tmp"
@@ -23,15 +21,6 @@ class Settings:
 
 
 def get_settings() -> Settings:
-    is_production = any(
-        os.environ.get(name)
-        for name in ("RAILWAY_ENVIRONMENT", "RAILWAY_PROJECT_ID", "RAILWAY_SERVICE_ID")
-    )
-
-    env_file = BASE_DIR / ".env"
-    if not is_production and env_file.exists():
-        load_dotenv(env_file, override=False)
-
     bot_token = os.environ.get("BOT_TOKEN", "").strip()
     admin_id_raw = os.environ.get("ADMIN_ID", "").strip()
     log_level = os.environ.get("LOG_LEVEL", "INFO").strip().upper()
