@@ -39,7 +39,8 @@ def get_user_router(settings: Settings) -> Router:
         await send_typing_action(message.bot, message.chat.id)
         await message.answer(
             "Здравствуйте 👋\n"
-            "Я помогу вам оставить заявку на консультацию.\n\n"
+            "Добро пожаловать в BB Aesthetic Lab.\n\n"
+            "Оставьте свои данные для записи на консультацию\n"
             "Это займет меньше минуты 😊",
             reply_markup=get_start_keyboard(),
         )
