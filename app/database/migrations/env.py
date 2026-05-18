@@ -26,6 +26,11 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 load_dotenv(BASE_DIR / ".env")
 default_database_url = f"sqlite+aiosqlite:///{(DATA_DIR / 'app.db').as_posix()}"
 database_url = os.getenv("DATABASE_URL", default_database_url)
+
+# === ДОБАВЛЕНО: Корректировка префикса для Railway Postgres ===
+if database_url.startswith("postgresql://"):
+    database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
 config.set_main_option("sqlalchemy.url", database_url)
 
 target_metadata = Base.metadata
