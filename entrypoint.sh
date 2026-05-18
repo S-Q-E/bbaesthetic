@@ -10,14 +10,19 @@ echo "Running migrations..."
 alembic upgrade head || {
   echo "Migration failed → resetting Alembic state..."
 
-  # 2. Сброс версии миграций
+  # 2. Асинхронное создание таблиц напрямую через SQLAlchemy, если миграции легли
   python -c "
+import asyncio
 from app.database import Base
-from app.database.session import engine
+from app.database.session import engine  # Проверьте, что в session.py переменная зовется именно engine
 
-# просто трогаем БД чтобы гарантировать создание
-Base.metadata.create_all(bind=engine)
-print('Tables ensured')
+async def main():
+    # Используем begin() и run_sync для асинхронного создания таблиц
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print('Tables ensured via async approach')
+
+asyncio.run(main())
 "
 
   # 3. Принудительно синхронизируем alembic
